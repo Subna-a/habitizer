@@ -1,5 +1,5 @@
 // Habitizer service worker: keeps the app usable offline.
-const CACHE = "habitizer-v3";
+const CACHE = "habitizer-v4";
 const SHELL = [
   "./",
   "./index.html",
@@ -11,7 +11,7 @@ const SHELL = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
@@ -28,7 +28,7 @@ self.addEventListener("fetch", e => {
   if (url.origin === location.origin) {
     // app files: try the network first so updates arrive, fall back to the cache offline
     e.respondWith(
-      fetch(e.request).then(r => {
+      fetch(e.request, { cache: "no-store" }).then(r => {
         const copy = r.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));
         return r;

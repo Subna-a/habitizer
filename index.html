@@ -599,7 +599,15 @@ window.addEventListener("online", () => { setStatus(); wake(); });
 window.addEventListener("offline", setStatus);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
 setInterval(() => { if (today() !== lastDay) { lastDay = today(); render(); } }, 60000);
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+if ("serviceWorker" in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => {
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
+  }).catch(() => {});
+  // when a new version takes over, reload once so it shows straight away
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } });
+}
 
 if (window.supabase) {
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
