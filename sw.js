@@ -1,5 +1,5 @@
 // Habitizer service worker: keeps the app usable offline.
-const CACHE = "habitizer-v4";
+const CACHE = "habitizer-v5";
 const SHELL = [
   "./",
   "./index.html",
@@ -38,4 +38,17 @@ self.addEventListener("fetch", e => {
     // the database library: cache first
     e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
   }
+});
+
+// notifications from the other person
+self.addEventListener("push", e => {
+  let d = {}; try { d = e.data.json(); } catch (x) { d = { title: "Habitizer", body: e.data ? e.data.text() : "" }; }
+  e.waitUntil(self.registration.showNotification(d.title || "Habitizer", { body: d.body || "", icon: "icon-192.png", badge: "icon-192.png" }));
+});
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
+    for (const c of list) if ("focus" in c) return c.focus();
+    return self.clients.openWindow("./");
+  }));
 });
