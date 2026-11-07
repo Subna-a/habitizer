@@ -1,5 +1,5 @@
 // Habitizer service worker: keeps the app usable offline.
-const CACHE = "habitizer-v2";
+const CACHE = "habitizer-v3";
 const SHELL = [
   "./",
   "./index.html",

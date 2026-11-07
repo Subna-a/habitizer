@@ -81,7 +81,7 @@ nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-b
 nav button{flex:1;background:none;border:none;font-size:16px;font-weight:600;padding:11px;border-radius:20px;color:var(--soft);display:flex;align-items:center;justify-content:center;gap:8px}
 nav button .av{width:10px;height:10px;border-radius:50%}
 nav button.on{color:#fff}
-nav button.on.riad{background:#0E7C7B} nav button.on.foufi{background:#D9486F}
+
 .dot{background:var(--warn);color:#fff;font-size:11px;border-radius:10px;padding:0 6px}
 .login{max-width:380px;margin:0 auto;padding:16vh 22px 0;text-align:center}
 .login h1{font-size:44px;margin:0 0 6px;letter-spacing:-1px}
@@ -93,6 +93,36 @@ nav button.on.riad{background:#0E7C7B} nav button.on.foufi{background:#D9486F}
 .foot button{background:none;border:none;color:var(--soft);font-size:13px;text-decoration:underline}
 .empty{color:var(--soft);font-size:14px;padding:4px 2px 2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+body{--me-tint:color-mix(in srgb,var(--me) 13%,#fff)}
+body.motion-off *{transition:none!important}
+body.contrast{--soft:#2E3747;--line:#8E9AAB}
+body.contrast .habit,body.contrast .note,body.contrast nav{border-width:2px}
+body.contrast .box{border-color:#5D6878}
+body.contrast .leaf.done span{color:#2E3747}
+.hero-actions{display:flex;gap:8px}
+.sheet{position:fixed;inset:0;background:var(--mist);z-index:20;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 16px) 18px calc(30px + env(safe-area-inset-bottom))}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sheet h1{font-size:34px;margin:0;letter-spacing:-.5px}
+.sheet h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:20px;margin:26px 0 4px}
+.sheet .hint{color:var(--soft);font-size:14px;margin:0 0 10px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 14px}
+.prow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.prow:first-child{border-top:none}
+.prow .grow{flex:1}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0 12px}
+.sw{width:40px;height:40px;border-radius:50%;border:3px solid transparent;padding:0;box-shadow:inset 0 0 0 3px #fff}
+.sw.on{border-color:var(--ink)}
+.emoji-btn{width:46px;height:46px;border-radius:14px;border:1px solid var(--line);background:var(--me-tint);font-size:24px;padding:0}
+.picker{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding:6px 0 12px}
+.picker button{height:46px;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:24px;padding:0}
+.seg{display:flex;background:#E3E8EF;border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;border:none;background:none;border-radius:10px;padding:9px 4px;font-weight:600;color:var(--soft)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(29,36,51,.12)}
+.toggle{width:52px;height:32px;border-radius:16px;border:none;background:#C9D2DD;position:relative;padding:0;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .15s}
+.toggle.on{background:var(--me)}
+.toggle.on::after{left:23px}
+.close{background:var(--me);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-weight:600}
 </style>
 </head>
 <body>
@@ -144,7 +174,18 @@ function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 const TABLES = ["people", "habits", "items", "checks", "water_logs", "nudges"];
 let S = load("hz-cache", { people: [], habits: [], items: [], checks: [], water_logs: [], nudges: [] });
 let outbox = load("hz-outbox", []);
-let ui = load("hz-ui", { view: null, open: {}, edit: false });
+let ui = load("hz-ui", { view: null, open: {}, edit: false }); ui.settings = false; ui.picker = null;
+let a11y = load("hz-a11y", { size: "m", contrast: false, motion: true });
+const DEFAULT_COLORS = { riad: "#0E7C7B", foufi: "#D9486F" };
+const PALETTE = ["#0E7C7B", "#D9486F", "#3F51B5", "#2E7D32", "#C2410C", "#7B3FA0", "#0369A1", "#B45309", "#BE123C", "#334155"];
+const EMOJI_CHOICES = ["💧","🏋️","💊","🧘","👟","🌙","📖","🥗","🍎","☀️","🧠","🦷","🚿","📵","✍️","🎸","🧹","💪","🏃","🚴","🏊","🥛","☕","🌿"];
+function colorOf(pid) { const p = S.people.find(x => x.id === pid); return (p && p.color) || DEFAULT_COLORS[pid] || "#0E7C7B"; }
+function applyA11y() {
+  document.body.classList.toggle("contrast", !!a11y.contrast);
+  document.body.classList.toggle("motion-off", !a11y.motion);
+  const z = { m: 1, l: 1.15, xl: 1.3 }[a11y.size] || 1;
+  document.getElementById("app").style.zoom = z;
+}
 let me = null;            // 'riad' | 'foufi'
 let online = navigator.onLine;
 let syncing = false;
@@ -174,7 +215,9 @@ async function flush() {
       const op = outbox[0];
       const q = op.kind === "delete"
         ? sb.from(op.t).delete().eq("id", op.id)
-        : sb.from(op.t).upsert(op.row);
+        : op.kind === "update"
+          ? sb.from(op.t).update((({ id, ...rest }) => rest)(op.row)).eq("id", op.row.id)
+          : sb.from(op.t).upsert(op.row);
       const { error } = await q;
       if (error) {
         // network problems: stop and retry later; data errors: drop the op so the queue never jams
@@ -327,6 +370,7 @@ function act(fn) { const k = "a" + (aid++); A[k] = fn; return `data-a="${k}"`; }
 $app.addEventListener("click", e => { const el = e.target.closest("[data-a]"); if (el && A[el.dataset.a]) { e.stopPropagation(); A[el.dataset.a](); } });
 const TICK = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
 function iconFor(h) {
+  if (h.emoji) return h.emoji;
   const t = h.title.toLowerCase();
   if (h.kind === "water" || t.includes("water")) return "💧";
   if (/gym|lift|workout|train/.test(t)) return "🏋️";
@@ -369,7 +413,10 @@ function render() {
   if (!ui.view) ui.view = me;
   const view = ui.view, t = today();
   document.body.className = view;
-  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = view === "foufi" ? "#D9486F" : "#0E7C7B";
+  document.body.style.setProperty("--me", colorOf(view));
+  applyA11y();
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = colorOf(view);
+  if (ui.settings) { renderSettings(); return; }
   const other = people.find(p => p.id !== me) || {};
   const viewName = (people.find(p => p.id === view) || {}).display_name || "";
   const unseen = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id);
@@ -378,7 +425,8 @@ function render() {
   const label = !hs.length ? "No habits yet" : doneCount === hs.length ? "Everything done today" : `${doneCount} of ${hs.length} done today`;
   let html = `<section class="hero"><div class="hero-top"><div>
       <h1>${esc(viewName)}</h1><div class="date">${esc(prettyToday())}</div></div>
-      <button class="edit ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button></div>
+      <div class="hero-actions"><button class="edit" ${act(() => { ui.settings = true; ui.picker = null; render(); window.scrollTo(0, 0); })} aria-label="Settings">⚙︎</button>
+      <button class="edit ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button></div></div>
       <div class="progress">${hs.map(h => `<i class="${isDone(h.id, null, t) ? "on" : ""}"></i>`).join("")}</div>
       <div class="progress-label">${esc(label)}</div></section>
     <div id="status" class="status"></div><main>`;
@@ -421,7 +469,7 @@ function render() {
   html += `</main><div class="foot"><button ${act(exportCsv)}>Export data</button><button ${act(signOut)}>Sign out</button></div>`;
   html += `<nav>${people.map(p => {
     const badge = p.id === me && unseen.length ? `<span class="dot">${unseen.length}</span>` : "";
-    return `<button class="${p.id} ${p.id === view ? "on" : ""}" ${act(() => { ui.view = p.id; saveAll(); render(); window.scrollTo(0, 0); })}>${esc(p.display_name)}${badge}</button>`;
+    return `<button class="${p.id} ${p.id === view ? "on" : ""}" style="${p.id === view ? `background:${colorOf(p.id)}` : ""}" ${act(() => { ui.view = p.id; saveAll(); render(); window.scrollTo(0, 0); })}>${esc(p.display_name)}${badge}</button>`;
   }).join("")}</nav>`;
   $app.innerHTML = html;
   setStatus();
@@ -458,6 +506,40 @@ function renderTree(h) {
   if (ui.edit) out += `<button class="add" ${act(() => addItem(h.id, null, false))}>+ Add item</button><button class="add" ${act(() => addItem(h.id, null, true))}>+ Add group or day</button>`;
   if (!out) out = `<div class="empty">Nothing listed yet. Tap Edit to add items.</div>`;
   return out;
+}
+
+// ---------- settings ----------
+function renderSettings() {
+  for (const k in A) delete A[k]; aid = 0;
+  const people = S.people;
+  const view = ui.view;
+  const setColor = (pid, c) => { const p = S.people.find(x => x.id === pid); if (p) mutate({ t: "people", kind: "update", row: { id: pid, color: c } }); };
+  const setEmoji = (h, e) => { ui.picker = null; mutate({ t: "habits", kind: "upsert", row: { ...h, emoji: e } }); };
+  const toggle = (on, fn, label) => `<button class="toggle ${on ? "on" : ""}" role="switch" aria-checked="${on}" aria-label="${label}" ${act(fn)}></button>`;
+  let html = `<div class="sheet"><div class="sheet-head"><h1>Settings</h1><button class="close" ${act(() => { ui.settings = false; ui.picker = null; render(); })}>Done</button></div>`;
+  html += `<h2>Colours</h2><p class="hint">Each page's colour. Changes show on both phones.</p><div class="panel">`;
+  for (const p of people) {
+    html += `<div class="prow" style="display:block"><div style="font-weight:600;margin-bottom:8px">${esc(p.display_name)}</div><div class="swatches">${PALETTE.map(c =>
+      `<button class="sw ${colorOf(p.id).toLowerCase() === c.toLowerCase() ? "on" : ""}" style="background:${c}" aria-label="Colour ${c}" ${act(() => setColor(p.id, c))}></button>`).join("")}</div></div>`;
+  }
+  html += `</div><h2>Habit icons</h2><p class="hint">Tap an icon to change it.</p><div class="seg" style="margin-bottom:10px">${people.map(p =>
+    `<button class="${p.id === view ? "on" : ""}" ${act(() => { ui.view = p.id; ui.picker = null; saveAll(); render(); })}>${esc(p.display_name)}</button>`).join("")}</div><div class="panel">`;
+  for (const h of habitsOf(view)) {
+    html += `<div class="prow"><button class="emoji-btn" ${act(() => { ui.picker = ui.picker === h.id ? null : h.id; render(); })} aria-label="Change icon for ${esc(h.title)}">${iconFor(h)}</button><div class="grow" style="font-weight:600">${esc(h.title)}</div></div>`;
+    if (ui.picker === h.id) {
+      html += `<div class="picker">${EMOJI_CHOICES.map(e => `<button ${act(() => setEmoji(h, e))}>${e}</button>`).join("")}
+        <button style="grid-column:span 3;font-size:15px" ${act(() => { const e = prompt("Type or paste any emoji"); if (e && e.trim()) setEmoji(h, [...e.trim()].slice(0, 2).join("")); })}>Use another</button>
+        <button style="grid-column:span 3;font-size:15px" ${act(() => setEmoji(h, null))}>Automatic</button></div>`;
+    }
+  }
+  if (!habitsOf(view).length) html += `<div class="prow"><div class="grow" style="color:var(--soft)">No habits on this page yet.</div></div>`;
+  html += `</div><h2>Accessibility</h2><p class="hint">These only change this phone.</p><div class="panel">
+    <div class="prow" style="display:block"><div style="font-weight:600;margin-bottom:8px">Text size</div><div class="seg">${[["m", "Standard"], ["l", "Large"], ["xl", "Extra large"]].map(([k, n]) =>
+      `<button class="${a11y.size === k ? "on" : ""}" ${act(() => { a11y.size = k; store("hz-a11y", a11y); render(); })}>${n}</button>`).join("")}</div><div style="height:10px"></div></div>
+    <div class="prow"><div class="grow"><div style="font-weight:600">High contrast</div><div class="meta">Darker text and stronger outlines</div></div>${toggle(a11y.contrast, () => { a11y.contrast = !a11y.contrast; store("hz-a11y", a11y); render(); }, "High contrast")}</div>
+    <div class="prow"><div class="grow"><div style="font-weight:600">Animations</div><div class="meta">Turn off to stop things sliding and fading</div></div>${toggle(a11y.motion, () => { a11y.motion = !a11y.motion; store("hz-a11y", a11y); render(); }, "Animations")}</div>
+  </div></div>`;
+  $app.innerHTML = html;
 }
 
 // ---------- login ----------
