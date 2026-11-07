@@ -7,64 +7,92 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Habitizer">
-<meta name="theme-color" content="#0f1720">
+<meta name="theme-color" content="#0E7C7B">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Habitizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1720;--card:#18222e;--card2:#1f2b38;--text:#e8eef4;--muted:#8a9bab;--accent:#3ecf8e;--water:#3b9eff;--water2:#7c5cff;--warn:#ff6b6b;--line:#2a3846}
+:root{--mist:#EDF1F6;--ink:#1D2433;--soft:#5D6878;--line:#DCE3EC;--card:#FFFFFF;--water:#3A8DFF;--water2:#8E6CF0;--warn:#D64545;--me:#0E7C7B;--me-tint:#E0F2F1}
+body.foufi{--me:#D9486F;--me-tint:#FCE6EC}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
-body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
-header h1{font-size:22px;margin:0;letter-spacing:-.3px}
-header .date{color:var(--muted);font-size:13px}
-.hbtn{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 11px;font-size:14px}
-.hbtn.on{background:var(--accent);color:#06281a;border-color:var(--accent)}
-.status{font-size:12px;color:var(--muted);padding:0 18px 8px}
-.status.off{color:#ffb347}
-main{padding:0 14px}
-.banner{background:#2b2350;border:1px solid #4b3d8f;border-radius:14px;padding:12px 14px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.habit{background:var(--card);border-radius:16px;margin:10px 0;overflow:hidden;border:1px solid var(--line)}
+html,body{margin:0;background:var(--mist);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+h1,.display{font-family:"Bricolage Grotesque",-apple-system,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--me);outline-offset:2px}
+.hero{background:var(--me);color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 22px 30px;border-radius:0 0 34px 34px;transition:background .3s}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start}
+.hero h1{font-size:46px;line-height:1;margin:6px 0 4px;font-weight:800;letter-spacing:-1px}
+.hero .date{opacity:.85;font-size:15px}
+.hero .edit{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:20px;padding:7px 14px;font-size:14px;font-weight:600}
+.hero .edit.on{background:#fff;color:var(--me)}
+.progress{display:flex;gap:5px;margin-top:20px}
+.progress i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.28)}
+.progress i.on{background:#fff}
+.progress-label{font-size:14px;margin-top:8px;opacity:.9}
+.status{font-size:12px;color:var(--soft);padding:10px 22px 0}
+.status.off{color:#B26A00}
+main{padding:4px 14px 0}
+.note{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.note .pill{background:var(--me);color:#fff;border:none;border-radius:20px;padding:8px 14px;font-weight:600;font-size:14px}
+.habit{background:var(--card);border-radius:22px;margin:12px 0;border:1px solid var(--line)}
+.habit.is-done{border-color:var(--me)}
 .row{display:flex;align-items:center;gap:12px;padding:14px}
-.box{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--muted);background:none;color:#06281a;font-size:18px;font-weight:700;display:grid;place-items:center;padding:0}
-.box.done{background:var(--accent);border-color:var(--accent)}
-.box.small{width:24px;height:24px;border-radius:7px;font-size:14px}
+.icon{flex:none;width:44px;height:44px;border-radius:14px;background:var(--me-tint);display:grid;place-items:center;font-size:22px}
 .title{flex:1;min-width:0}
-.title b{font-size:17px}
-.meta{color:var(--muted);font-size:12px;margin-top:2px}
-.streak{font-size:14px;margin-left:6px}
-.chev{color:var(--muted);font-size:20px;transition:transform .15s}
+.title b{font-size:18px;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700}
+.meta{color:var(--soft);font-size:13px;margin-top:1px}
+.reacts{margin-left:6px}
+.box{flex:none;width:34px;height:34px;border-radius:50%;border:2.5px solid #B7C2CF;background:#fff;display:grid;place-items:center;padding:0;transition:background .15s,border-color .15s,transform .15s}
+.box svg{width:18px;height:18px;opacity:0;transform:scale(.4);transition:opacity .15s,transform .2s}
+.box.done{background:var(--me);border-color:var(--me)}
+.box.done svg{opacity:1;transform:scale(1)}
+.box:active{transform:scale(.9)}
+.box.small{width:26px;height:26px;border-width:2px}
+.box.small svg{width:14px;height:14px}
+.chev{flex:none;color:var(--soft);font-size:22px;line-height:1;transition:transform .2s;background:none;border:none;padding:4px}
 .chev.open{transform:rotate(90deg)}
-.reacts{font-size:16px;margin-left:6px}
-.sub{padding:0 14px 12px 14px}
-.group{background:var(--card2);border-radius:12px;margin:8px 0;overflow:hidden}
-.ghead{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:600;font-size:15px}
-.ghead .tag{background:var(--accent);color:#06281a;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700}
-.leaf{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:15px}
-.leaf.dim{opacity:.55}
+.tools button{background:none;border:none;color:var(--soft);font-size:15px;padding:4px 6px}
+.tools .del{color:var(--warn)}
+.tree{padding:0 14px 14px}
+.group{border-top:1px solid var(--line)}
+.group:first-child{border-top:none}
+.ghead{display:flex;align-items:center;gap:8px;padding:12px 2px;font-weight:600}
+.ghead .gname{flex:1}
+.ghead .count{color:var(--soft);font-weight:500;font-size:13px}
+.tag{background:var(--me);color:#fff;font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600}
+.leaf{display:flex;align-items:center;gap:12px;padding:8px 2px 8px 6px}
 .leaf span{flex:1}
-.x{background:none;border:none;color:var(--warn);font-size:18px;padding:0 4px}
-.edit{background:none;border:none;color:var(--muted);font-size:14px;padding:0 4px}
-.add{display:block;width:100%;text-align:left;background:none;border:1px dashed var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;margin:6px 0;font-size:14px}
-.water{display:flex;gap:16px;align-items:center;padding:0 14px 14px}
-.water .btns{display:flex;flex-wrap:wrap;gap:8px;flex:1}
-.water .btns button{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font-size:15px}
-.amt{font-size:20px;font-weight:700;margin-bottom:6px;width:100%}
-.amt small{color:var(--muted);font-weight:400;font-size:14px}
-.emojis{display:flex;gap:6px;padding:0 14px 12px}
-.emojis button{background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:5px 10px;font-size:16px}
-nav{position:fixed;left:0;right:0;bottom:0;background:#0b1118ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
-nav button{flex:1;background:none;border:none;color:var(--muted);font-size:15px;padding:8px;border-radius:12px;position:relative}
-nav button.on{color:var(--text);background:var(--card)}
-.dot{display:inline-block;margin-left:6px;background:var(--warn);color:#fff;font-size:11px;border-radius:10px;padding:0 6px;vertical-align:2px}
-.login{max-width:380px;margin:12vh auto 0;padding:0 22px;text-align:center}
-.login input{width:100%;font-size:18px;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);margin:8px 0;text-align:center}
-.big{width:100%;font-size:17px;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#06281a;font-weight:700;margin:6px 0}
-.ghost{width:100%;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);margin:6px 0}
+.leaf.done span{color:var(--soft);text-decoration:line-through;text-decoration-color:#B7C2CF}
+.add{display:block;width:100%;text-align:left;background:none;border:1.5px dashed var(--line);color:var(--soft);border-radius:14px;padding:10px 12px;margin:8px 0;font-size:14px}
+.water{display:flex;gap:18px;align-items:center;padding:0 16px 16px}
+.water .side{flex:1}
+.amt{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:30px;font-weight:800;line-height:1}
+.amt small{font-size:15px;color:var(--soft);font-weight:500;font-family:-apple-system,system-ui,sans-serif}
+.extra{color:var(--water2);font-size:13px;margin-top:2px}
+.wbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.wbtns button{background:#EAF3FF;border:none;color:#1E5BB8;border-radius:12px;padding:10px 0;font-weight:600;font-size:15px}
+.wbtns button.quiet{background:#F2F4F7;color:var(--soft)}
+.emojis{display:flex;gap:8px;padding:0 14px 14px 70px}
+.emojis button{background:#F2F4F7;border:none;border-radius:20px;padding:6px 11px;font-size:17px}
+nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:26px;display:flex;padding:6px;box-shadow:0 8px 24px rgba(29,36,51,.10)}
+nav button{flex:1;background:none;border:none;font-size:16px;font-weight:600;padding:11px;border-radius:20px;color:var(--soft);display:flex;align-items:center;justify-content:center;gap:8px}
+nav button .av{width:10px;height:10px;border-radius:50%}
+nav button.on{color:#fff}
+nav button.on.riad{background:#0E7C7B} nav button.on.foufi{background:#D9486F}
+.dot{background:var(--warn);color:#fff;font-size:11px;border-radius:10px;padding:0 6px}
+.login{max-width:380px;margin:0 auto;padding:16vh 22px 0;text-align:center}
+.login h1{font-size:44px;margin:0 0 6px;letter-spacing:-1px}
+.login input{width:100%;font-size:17px;padding:14px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);margin:6px 0;text-align:center}
+.big{width:100%;font-size:17px;padding:14px;border-radius:14px;border:none;background:#0E7C7B;color:#fff;font-weight:700;margin:8px 0}
+.ghost{width:100%;font-size:16px;padding:13px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);margin:5px 0}
 .err{color:var(--warn);font-size:14px;min-height:20px}
-.foot{color:var(--muted);font-size:12px;text-align:center;padding:18px}
-.foot button{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:12px}
+.foot{display:flex;justify-content:center;gap:18px;padding:22px}
+.foot button{background:none;border:none;color:var(--soft);font-size:13px;text-decoration:underline}
+.empty{color:var(--soft);font-size:14px;padding:4px 2px 2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -199,21 +227,17 @@ function isDone(hid, iid, day) { const c = S.checks.find(x => x.id === checkId(h
 function waterToday(hid) { const t = today(); return S.water_logs.filter(w => w.habit_id === hid && w.day === t).reduce((s, w) => s + w.ml, 0); }
 function isWeekly(hid) { return S.items.some(i => i.habit_id === hid && !i.archived && i.weekday); }
 
-// leaves that count toward today's auto-tick
-function activeLeaves(hid) {
+// leaf groups that count toward the auto-tick
+function leafGroups(hid) {
   const tops = kids(hid, null);
-  if (isWeekly(hid)) {
-    const day = tops.find(t => t.weekday === todayWd());
-    if (!day) return [];
-    const ch = kids(hid, day.id);
-    return ch.length ? ch : [];
-  }
+  if (isWeekly(hid)) return tops.map(t => kids(hid, t.id)).filter(g => g.length);
   const out = [];
   const walk = list => list.forEach(it => { const c = kids(hid, it.id); c.length ? walk(c) : (!it.is_group && out.push(it)); });
   walk(tops);
-  return out;
+  return out.length ? [out] : [];
 }
-function allLeavesDone(hid) { const l = activeLeaves(hid); return l.length > 0 && l.every(x => isDone(hid, x.id, today())); }
+// weekly habits (Gym): finishing any one day's list counts; others: every item
+function allLeavesDone(hid) { const t = today(); return leafGroups(hid).some(g => g.every(x => isDone(hid, x.id, t))); }
 
 function checkOp(hid, iid, done) {
   return { t: "checks", kind: "upsert", row: { id: checkId(hid, iid, today()), habit_id: hid, item_id: iid || null, day: today(), done, updated_by: me, updated_at: new Date().toISOString() } };
@@ -301,18 +325,33 @@ const $app = document.getElementById("app");
 const A = {}; let aid = 0;
 function act(fn) { const k = "a" + (aid++); A[k] = fn; return `data-a="${k}"`; }
 $app.addEventListener("click", e => { const el = e.target.closest("[data-a]"); if (el && A[el.dataset.a]) { e.stopPropagation(); A[el.dataset.a](); } });
+const TICK = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+function iconFor(h) {
+  const t = h.title.toLowerCase();
+  if (h.kind === "water" || t.includes("water")) return "💧";
+  if (/gym|lift|workout|train/.test(t)) return "🏋️";
+  if (/medic|pill|vitamin|meds/.test(t)) return "💊";
+  if (/stretch|yoga|mobility/.test(t)) return "🧘";
+  if (/walk|step|run/.test(t)) return "👟";
+  if (/sleep|bed/.test(t)) return "🌙";
+  if (/read|book|study/.test(t)) return "📖";
+  return "✨";
+}
 
 function bottle(total, goal) {
-  const frac = Math.min(total / goal, 1);
-  const over = total > goal;
-  const top = 22, bottom = 116, h = bottom - top;
-  const y = bottom - frac * h;
-  const path = "M22 4h16v10c8 4 12 9 12 18v78a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V32c0-9 4-14 12-18z";
-  return `<svg width="58" height="118" viewBox="0 0 60 122" aria-label="water bottle">
-    <defs><clipPath id="cp${goal}${total}"><path d="${path}"/></clipPath></defs>
-    <g clip-path="url(#cp${goal}${total})"><rect x="0" y="${y}" width="60" height="${122 - y}" fill="${over ? "var(--water2)" : "var(--water)"}" style="transition:y .4s"/></g>
-    <path d="${path}" fill="none" stroke="#9fb3c6" stroke-width="2.5"/>
-    <rect x="20" y="0" width="20" height="6" rx="2" fill="#9fb3c6"/></svg>`;
+  const frac = Math.min(total / goal, 1), over = total > goal;
+  const top = 26, bottom = 128, y = bottom - frac * (bottom - top);
+  const id = "b" + goal + "_" + total;
+  const path = "M26 6h18v12c9 4 13 10 13 19v86a10 10 0 0 1-10 10H23a10 10 0 0 1-10-10V37c0-9 4-15 13-19z";
+  return `<svg width="66" height="134" viewBox="0 0 70 136" role="img" aria-label="${(total / 1000).toFixed(2)} of ${goal / 1000} litres">
+    <defs><clipPath id="c${id}"><path d="${path}"/></clipPath>
+      <linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${over ? "#A88BF5" : "#7DB8FF"}"/><stop offset="1" stop-color="${over ? "#8E6CF0" : "#3A8DFF"}"/></linearGradient></defs>
+    <path d="${path}" fill="#F3F7FC"/>
+    <g clip-path="url(#c${id})"><rect x="0" y="${y}" width="70" height="${136 - y}" fill="url(#g${id})"/>
+      ${frac > 0 ? `<path d="M0 ${y} q9 -5 17.5 0 t17.5 0 t17.5 0 t17.5 0 V${y + 6} H0z" fill="#fff" opacity=".35"/>` : ""}
+      <rect x="18" y="40" width="5" height="70" rx="2.5" fill="#fff" opacity=".55"/></g>
+    <path d="${path}" fill="none" stroke="#B9C8DA" stroke-width="2.5"/>
+    <rect x="24" y="0" width="22" height="8" rx="3" fill="${over ? "#8E6CF0" : "#3A8DFF"}"/></svg>`;
 }
 
 function setStatus() {
@@ -320,7 +359,7 @@ function setStatus() {
   const n = outbox.length;
   online = navigator.onLine;
   el.className = "status" + (online ? "" : " off");
-  el.textContent = online ? (n ? `Syncing ${n} change${n > 1 ? "s" : ""}…` : "Up to date") : `Offline — ${n} change${n === 1 ? "" : "s"} saved on this phone`;
+  el.textContent = online ? (n ? `Syncing ${n} change${n > 1 ? "s" : ""}…` : "Synced") : `Offline. ${n} change${n === 1 ? "" : "s"} saved on this phone, will sync when you're back online.`;
 }
 
 function render() {
@@ -329,52 +368,60 @@ function render() {
   const people = S.people.length ? S.people : [{ id: "riad", display_name: "Riad" }, { id: "foufi", display_name: "Foufi" }];
   if (!ui.view) ui.view = me;
   const view = ui.view, t = today();
+  document.body.className = view;
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = view === "foufi" ? "#D9486F" : "#0E7C7B";
   const other = people.find(p => p.id !== me) || {};
+  const viewName = (people.find(p => p.id === view) || {}).display_name || "";
   const unseen = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id);
-  let html = `<header><div><h1>${esc((people.find(p => p.id === view) || {}).display_name || "")}</h1><div class="date">${esc(prettyToday())}</div></div>
-    <button class="hbtn ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button></header>
+  const hs = habitsOf(view);
+  const doneCount = hs.filter(h => isDone(h.id, null, t)).length;
+  const label = !hs.length ? "No habits yet" : doneCount === hs.length ? "Everything done today" : `${doneCount} of ${hs.length} done today`;
+  let html = `<section class="hero"><div class="hero-top"><div>
+      <h1>${esc(viewName)}</h1><div class="date">${esc(prettyToday())}</div></div>
+      <button class="edit ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button></div>
+      <div class="progress">${hs.map(h => `<i class="${isDone(h.id, null, t) ? "on" : ""}"></i>`).join("")}</div>
+      <div class="progress-label">${esc(label)}</div></section>
     <div id="status" class="status"></div><main>`;
   if (view === me && unseen.length) {
-    html += `<div class="banner"><div>${esc(other.display_name)} nudged you ${unseen.map(n => esc(n.emoji)).join(" ")}</div><button class="hbtn" ${act(markSeen)}>OK</button></div>`;
+    html += `<div class="note"><div>${esc(other.display_name)} nudged you ${unseen.map(n => esc(n.emoji)).join(" ")}</div><button class="pill" ${act(markSeen)}>Got it</button></div>`;
   }
   if (view !== me) {
-    html += `<div class="banner" style="background:var(--card2);border-color:var(--line)"><div>Send ${esc(other.display_name)} a nudge</div><button class="hbtn on" ${act(() => nudge(view, null, "👋"))}>👋 Nudge</button></div>`;
+    html += `<div class="note"><div>Cheer ${esc(other.display_name)} on</div><button class="pill" ${act(() => nudge(view, null, "👋"))}>Send a nudge 👋</button></div>`;
   }
-  for (const h of habitsOf(view)) {
+  for (const h of hs) {
     const done = isDone(h.id, null, t);
-    const days = S.checks.filter(c => c.habit_id === h.id && !c.item_id && c.done).map(c => c.day);
-    const st = streaks(days, t);
+    const st = streaks(S.checks.filter(c => c.habit_id === h.id && !c.item_id && c.done).map(c => c.day), t);
     const open = !!ui.open[h.id];
     const reacts = S.nudges.filter(n => n.habit_id === h.id && n.created_at && fmtDay.format(new Date(n.created_at)) === t).map(n => n.emoji).join("");
-    const hasSub = kids(h.id, null).length > 0 || ui.edit;
-    html += `<div class="habit"><div class="row">
-      <button class="box ${done ? "done" : ""}" ${act(() => toggleHabit(h.id))}>${done ? "✓" : ""}</button>
-      <div class="title" ${act(() => { ui.open[h.id] = !open; saveAll(); render(); })}>
-        <b>${esc(h.title)}</b><span class="streak">🔥 ${st.cur}</span>${reacts ? `<span class="reacts">${esc(reacts)}</span>` : ""}
-        <div class="meta">Best streak: ${st.best} day${st.best === 1 ? "" : "s"}</div></div>
-      ${ui.edit ? `<button class="edit" ${act(() => renameHabit(h))}>✎</button><button class="x" ${act(() => deleteHabit(h))}>✕</button>` : ""}
-      ${hasSub && h.kind !== "water" ? `<span class="chev ${open ? "open" : ""}" ${act(() => { ui.open[h.id] = !open; saveAll(); render(); })}>›</span>` : ""}
+    const hasSub = h.kind !== "water" && (kids(h.id, null).length > 0 || ui.edit);
+    const streakTxt = st.cur ? `🔥 ${st.cur}-day streak` : "Start a streak today";
+    const toggleOpen = act(() => { ui.open[h.id] = !open; saveAll(); render(); });
+    html += `<div class="habit ${done ? "is-done" : ""}"><div class="row">
+      <div class="icon" aria-hidden="true">${iconFor(h)}</div>
+      <div class="title" ${hasSub ? toggleOpen : ""}><b>${esc(h.title)}</b>${reacts ? `<span class="reacts">${esc(reacts)}</span>` : ""}
+        <div class="meta">${streakTxt}${st.best > st.cur ? `, best ${st.best}` : ""}</div></div>
+      ${ui.edit ? `<span class="tools"><button ${act(() => renameHabit(h))} aria-label="Rename">✎</button><button class="del" ${act(() => deleteHabit(h))} aria-label="Delete">✕</button></span>` : ""}
+      ${hasSub ? `<button class="chev ${open ? "open" : ""}" ${toggleOpen} aria-label="Show items">›</button>` : ""}
+      <button class="box ${done ? "done" : ""}" ${act(() => toggleHabit(h.id))} aria-label="Mark ${esc(h.title)} done">${TICK}</button>
     </div>`;
     if (h.kind === "water") {
       const tot = waterToday(h.id), goal = h.water_goal_ml || 2000;
-      html += `<div class="water">${bottle(tot, goal)}<div class="btns">
-        <div class="amt">${+(tot / 1000).toFixed(2)} <small>/ ${goal / 1000} L${tot > goal ? ` · +${((tot - goal) / 1000).toFixed(2)} L extra` : ""}</small></div>
-        <button ${act(() => addWater(h, 250))}>+250 ml</button><button ${act(() => addWater(h, 500))}>+500 ml</button>
-        <button ${act(() => customWater(h))}>Custom</button><button ${act(() => undoWater(h))}>Undo</button></div></div>`;
+      html += `<div class="water">${bottle(tot, goal)}<div class="side">
+        <div class="amt">${+(tot / 1000).toFixed(2)} <small>of ${goal / 1000} L</small></div>
+        ${tot > goal ? `<div class="extra">${+((tot - goal) / 1000).toFixed(2)} L over your goal</div>` : `<div class="extra" style="color:var(--soft)">${+((goal - tot) / 1000).toFixed(2)} L to go</div>`}
+        <div class="wbtns"><button ${act(() => addWater(h, 250))}>+ 250 ml</button><button ${act(() => addWater(h, 500))}>+ 500 ml</button>
+        <button class="quiet" ${act(() => customWater(h))}>Other amount</button><button class="quiet" ${act(() => undoWater(h))}>Undo</button></div></div></div>`;
     }
-    if (open && h.kind !== "water") html += `<div class="sub">${renderTree(h)}</div>`;
-    if (view !== me && done) {
-      html += `<div class="emojis">${REACTIONS.map(e => `<button ${act(() => nudge(view, h.id, e))}>${e}</button>`).join("")}</div>`;
-    }
+    if (open && hasSub) html += `<div class="tree">${renderTree(h)}</div>`;
+    if (view !== me && done) html += `<div class="emojis">${REACTIONS.map(e => `<button ${act(() => nudge(view, h.id, e))}>${e}</button>`).join("")}</div>`;
     html += `</div>`;
   }
-  if (ui.edit) {
-    html += `<button class="add" ${act(() => addHabit(view, false))}>+ Add habit</button><button class="add" ${act(() => addHabit(view, true))}>+ Add water habit</button>`;
-  }
-  html += `</main><div class="foot">Habitizer · <button ${act(exportCsv)}>Export data</button> · <button ${act(signOut)}>Sign out</button></div>`;
+  if (!hs.length && !ui.edit) html += `<div class="note"><div>No habits here yet.</div><button class="pill" ${act(() => { ui.edit = true; saveAll(); render(); })}>Add one</button></div>`;
+  if (ui.edit) html += `<button class="add" ${act(() => addHabit(view, false))}>+ Add habit</button><button class="add" ${act(() => addHabit(view, true))}>+ Add water habit</button>`;
+  html += `</main><div class="foot"><button ${act(exportCsv)}>Export data</button><button ${act(signOut)}>Sign out</button></div>`;
   html += `<nav>${people.map(p => {
     const badge = p.id === me && unseen.length ? `<span class="dot">${unseen.length}</span>` : "";
-    return `<button class="${p.id === view ? "on" : ""}" ${act(() => { ui.view = p.id; saveAll(); render(); window.scrollTo(0, 0); })}>${esc(p.display_name)}${p.id === me ? " (you)" : ""}${badge}</button>`;
+    return `<button class="${p.id} ${p.id === view ? "on" : ""}" ${act(() => { ui.view = p.id; saveAll(); render(); window.scrollTo(0, 0); })}>${esc(p.display_name)}${badge}</button>`;
   }).join("")}</nav>`;
   $app.innerHTML = html;
   setStatus();
@@ -384,39 +431,39 @@ function renderTree(h) {
   const wd = todayWd(), t = today();
   const weekly = isWeekly(h.id);
   let out = "";
-  const leaf = (it, tickable) => {
-    const d = tickable && isDone(h.id, it.id, t);
-    return `<div class="leaf ${tickable ? "" : "dim"}">
-      ${tickable ? `<button class="box small ${d ? "done" : ""}" ${act(() => toggleLeaf(h.id, it.id))}>${d ? "✓" : ""}</button>` : `<span style="flex:none;width:24px;text-align:center">•</span>`}
+  const leaf = it => {
+    const d = isDone(h.id, it.id, t);
+    return `<div class="leaf ${d ? "done" : ""}">
+      <button class="box small ${d ? "done" : ""}" ${act(() => toggleLeaf(h.id, it.id))} aria-label="Mark ${esc(it.label)} done">${TICK}</button>
       <span>${esc(it.label)}</span>
-      ${ui.edit ? `<button class="edit" ${act(() => renameItem(it))}>✎</button><button class="x" ${act(() => deleteItem(it))}>✕</button>` : ""}</div>`;
+      ${ui.edit ? `<span class="tools"><button ${act(() => renameItem(it))} aria-label="Rename">✎</button><button class="del" ${act(() => deleteItem(it))} aria-label="Remove">✕</button></span>` : ""}</div>`;
   };
   for (const top of kids(h.id, null)) {
     const ch = kids(h.id, top.id);
-    const isGroup = top.is_group || ch.length > 0 || !!top.weekday;
-    if (!isGroup) { out += leaf(top, true); continue; }
+    if (!(top.is_group || ch.length || top.weekday)) { out += leaf(top); continue; }
     const isToday = weekly && top.weekday === wd;
-    const tickable = !weekly || isToday;
     const key = "g" + top.id;
     const open = ui.open[key] !== undefined ? ui.open[key] : (!weekly || isToday);
+    const n = ch.filter(c => isDone(h.id, c.id, t)).length;
     out += `<div class="group"><div class="ghead" ${act(() => { ui.open[key] = !open; saveAll(); render(); })}>
-      <span class="chev ${open ? "open" : ""}">›</span><span style="flex:1">${esc(top.label)}</span>${isToday ? `<span class="tag">Today</span>` : ""}
-      ${ui.edit ? `<button class="edit" ${act(() => renameItem(top))}>✎</button><button class="x" ${act(() => deleteItem(top))}>✕</button>` : ""}</div>`;
+      <span class="chev ${open ? "open" : ""}" aria-hidden="true">›</span><span class="gname">${esc(top.label)}</span>
+      ${isToday ? `<span class="tag">Today</span>` : ""}${ch.length ? `<span class="count">${n}/${ch.length}</span>` : ""}
+      ${ui.edit ? `<span class="tools"><button ${act(() => renameItem(top))} aria-label="Rename">✎</button><button class="del" ${act(() => deleteItem(top))} aria-label="Remove">✕</button></span>` : ""}</div>`;
     if (open) {
-      out += ch.map(c => leaf(c, tickable)).join("");
-      if (ui.edit) out += `<div style="padding:0 12px 8px"><button class="add" ${act(() => addItem(h.id, top.id, false))}>+ Add to ${esc(top.label)}</button></div>`;
+      out += ch.map(leaf).join("");
+      if (ui.edit) out += `<button class="add" ${act(() => addItem(h.id, top.id, false))}>+ Add to ${esc(top.label)}</button>`;
     }
     out += `</div>`;
   }
-  if (ui.edit) out += `<button class="add" ${act(() => addItem(h.id, null, false))}>+ Add item</button><button class="add" ${act(() => addItem(h.id, null, true))}>+ Add group / day</button>`;
-  if (!out) out = `<div class="meta" style="padding:4px 2px">No sub-items. Tap Edit to add some.</div>`;
+  if (ui.edit) out += `<button class="add" ${act(() => addItem(h.id, null, false))}>+ Add item</button><button class="add" ${act(() => addItem(h.id, null, true))}>+ Add group or day</button>`;
+  if (!out) out = `<div class="empty">Nothing listed yet. Tap Edit to add items.</div>`;
   return out;
 }
 
 // ---------- login ----------
 function renderLogin(msg) {
   const saved = load("hz-email", "");
-  $app.innerHTML = `<div class="login"><h1>Habitizer</h1><p style="color:var(--muted)">Who's this?</p>
+  $app.innerHTML = `<div class="login"><h1>Habitizer</h1><p style="color:var(--soft)">Who's this?</p>
     <button class="ghost" id="pick-riad">I'm Riad</button><button class="ghost" id="pick-foufi">I'm Foufi</button>
     <input id="email" type="email" placeholder="email" value="${esc(saved)}" autocomplete="username">
     <input id="pw" type="password" placeholder="password (8+ characters)" autocomplete="current-password">
