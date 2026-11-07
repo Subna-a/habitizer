@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Habitizer">
+<meta name="theme-color" content="#0f1720">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Habitizer</title>
+<style>
+:root{--bg:#0f1720;--card:#18222e;--card2:#1f2b38;--text:#e8eef4;--muted:#8a9bab;--accent:#3ecf8e;--water:#3b9eff;--water2:#7c5cff;--warn:#ff6b6b;--line:#2a3846}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
+header h1{font-size:22px;margin:0;letter-spacing:-.3px}
+header .date{color:var(--muted);font-size:13px}
+.hbtn{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 11px;font-size:14px}
+.hbtn.on{background:var(--accent);color:#06281a;border-color:var(--accent)}
+.status{font-size:12px;color:var(--muted);padding:0 18px 8px}
+.status.off{color:#ffb347}
+main{padding:0 14px}
+.banner{background:#2b2350;border:1px solid #4b3d8f;border-radius:14px;padding:12px 14px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.habit{background:var(--card);border-radius:16px;margin:10px 0;overflow:hidden;border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:12px;padding:14px}
+.box{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--muted);background:none;color:#06281a;font-size:18px;font-weight:700;display:grid;place-items:center;padding:0}
+.box.done{background:var(--accent);border-color:var(--accent)}
+.box.small{width:24px;height:24px;border-radius:7px;font-size:14px}
+.title{flex:1;min-width:0}
+.title b{font-size:17px}
+.meta{color:var(--muted);font-size:12px;margin-top:2px}
+.streak{font-size:14px;margin-left:6px}
+.chev{color:var(--muted);font-size:20px;transition:transform .15s}
+.chev.open{transform:rotate(90deg)}
+.reacts{font-size:16px;margin-left:6px}
+.sub{padding:0 14px 12px 14px}
+.group{background:var(--card2);border-radius:12px;margin:8px 0;overflow:hidden}
+.ghead{display:flex;align-items:center;gap:8px;padding:10px 12px;font-weight:600;font-size:15px}
+.ghead .tag{background:var(--accent);color:#06281a;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:700}
+.leaf{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:15px}
+.leaf.dim{opacity:.55}
+.leaf span{flex:1}
+.x{background:none;border:none;color:var(--warn);font-size:18px;padding:0 4px}
+.edit{background:none;border:none;color:var(--muted);font-size:14px;padding:0 4px}
+.add{display:block;width:100%;text-align:left;background:none;border:1px dashed var(--line);color:var(--muted);border-radius:10px;padding:8px 12px;margin:6px 0;font-size:14px}
+.water{display:flex;gap:16px;align-items:center;padding:0 14px 14px}
+.water .btns{display:flex;flex-wrap:wrap;gap:8px;flex:1}
+.water .btns button{background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font-size:15px}
+.amt{font-size:20px;font-weight:700;margin-bottom:6px;width:100%}
+.amt small{color:var(--muted);font-weight:400;font-size:14px}
+.emojis{display:flex;gap:6px;padding:0 14px 12px}
+.emojis button{background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:5px 10px;font-size:16px}
+nav{position:fixed;left:0;right:0;bottom:0;background:#0b1118ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:none;color:var(--muted);font-size:15px;padding:8px;border-radius:12px;position:relative}
+nav button.on{color:var(--text);background:var(--card)}
+.dot{display:inline-block;margin-left:6px;background:var(--warn);color:#fff;font-size:11px;border-radius:10px;padding:0 6px;vertical-align:2px}
+.login{max-width:380px;margin:12vh auto 0;padding:0 22px;text-align:center}
+.login input{width:100%;font-size:18px;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);margin:8px 0;text-align:center}
+.big{width:100%;font-size:17px;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#06281a;font-weight:700;margin:6px 0}
+.ghost{width:100%;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);margin:6px 0}
+.err{color:var(--warn);font-size:14px;min-height:20px}
+.foot{color:var(--muted);font-size:12px;text-align:center;padding:18px}
+.foot button{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+"use strict";
+const SUPABASE_URL = "https://jbdxneivitincpvmmijh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_rWTRcLBlg8sbNFD7rC5hzA_22E_wy3y";
+const TZ = "Asia/Beirut";
+const EMAILS = { riad: "riadmohamadtawil@gmail.com", foufi: "sabbaghfarida@gmail.com" };
+const REACTIONS = ["💪", "🔥", "❤️", "👏"];
+
+// ---------- dates (always Beirut time) ----------
+const fmtDay = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+const fmtWd = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" });
+const WD = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 };
+function today() { return fmtDay.format(new Date()); }
+function todayWd() { return WD[fmtWd.format(new Date())]; }
+function addDays(day, n) {
+  const [y, m, d] = day.split("-").map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d + n));
+  return t.toISOString().slice(0, 10);
+}
+function prettyToday() {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: TZ, weekday: "long", day: "numeric", month: "short" }).format(new Date());
+}
+
+// ---------- streaks ----------
+function streaks(doneDays, todayKey) {
+  const set = new Set(doneDays);
+  let cur = 0;
+  let d = set.has(todayKey) ? todayKey : addDays(todayKey, -1);
+  while (set.has(d)) { cur++; d = addDays(d, -1); }
+  const sorted = [...set].sort();
+  let best = 0, run = 0, prev = null;
+  for (const x of sorted) {
+    run = prev && addDays(prev, 1) === x ? run + 1 : 1;
+    best = Math.max(best, run); prev = x;
+  }
+  return { cur, best: Math.max(best, cur) };
+}
+
+// ---------- local storage helpers ----------
+function load(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+// ---------- state ----------
+const TABLES = ["people", "habits", "items", "checks", "water_logs", "nudges"];
+let S = load("hz-cache", { people: [], habits: [], items: [], checks: [], water_logs: [], nudges: [] });
+let outbox = load("hz-outbox", []);
+let ui = load("hz-ui", { view: null, open: {}, edit: false });
+let me = null;            // 'riad' | 'foufi'
+let online = navigator.onLine;
+let syncing = false;
+let sb = null;
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 3 | 8)).toString(16); }));
+
+function saveAll() { store("hz-cache", S); store("hz-outbox", outbox); store("hz-ui", ui); }
+
+function applyLocal(op) {
+  const arr = S[op.t];
+  if (!arr) return;
+  const i = arr.findIndex(r => r.id === (op.row ? op.row.id : op.id));
+  if (op.kind === "delete") { if (i >= 0) arr.splice(i, 1); return; }
+  if (i >= 0) arr[i] = { ...arr[i], ...op.row }; else arr.push({ ...op.row });
+}
+
+function mutate(...ops) {
+  for (const op of ops) { applyLocal(op); outbox.push(op); }
+  saveAll(); render(); flush();
+}
+
+async function flush() {
+  if (syncing || !sb || !outbox.length) return;
+  syncing = true;
+  try {
+    while (outbox.length) {
+      const op = outbox[0];
+      const q = op.kind === "delete"
+        ? sb.from(op.t).delete().eq("id", op.id)
+        : sb.from(op.t).upsert(op.row);
+      const { error } = await q;
+      if (error) {
+        // network problems: stop and retry later; data errors: drop the op so the queue never jams
+        if (!navigator.onLine || /fetch|network/i.test(error.message || "")) break;
+        console.warn("dropped op", op, error);
+      }
+      outbox.shift(); store("hz-outbox", outbox);
+    }
+  } catch (e) { /* offline */ }
+  syncing = false;
+  setStatus();
+}
+
+async function refresh() {
+  if (!sb) return;
+  try {
+    const since = addDays(today(), -400);
+    const [p, h, i, c, w, n] = await Promise.all([
+      sb.from("people").select("*").order("position"),
+      sb.from("habits").select("*").order("position"),
+      sb.from("items").select("*").order("position"),
+      sb.from("checks").select("*").gte("day", since),
+      sb.from("water_logs").select("*").gte("day", addDays(today(), -60)),
+      sb.from("nudges").select("*").gte("created_at", new Date(Date.now() - 7 * 864e5).toISOString()),
+    ]);
+    if ([p, h, i, c, w, n].some(r => r.error)) throw new Error("fetch failed");
+    S = { people: p.data, habits: h.data, items: i.data, checks: c.data, water_logs: w.data, nudges: n.data };
+    for (const op of outbox) applyLocal(op);   // keep offline changes visible
+    saveAll(); render();
+  } catch (e) { setStatus(); }
+}
+
+function subscribe() {
+  sb.channel("habitizer")
+    .on("postgres_changes", { event: "*", schema: "public" }, payload => {
+      const t = payload.table;
+      if (!S[t]) return;
+      if (payload.eventType === "DELETE") applyLocal({ t, kind: "delete", id: payload.old.id });
+      else applyLocal({ t, kind: "upsert", row: payload.new });
+      saveAll(); render();
+    })
+    .subscribe();
+}
+
+// ---------- data helpers ----------
+const habitsOf = who => S.habits.filter(h => h.owner === who && !h.archived).sort((a, b) => a.position - b.position);
+const kids = (hid, pid) => S.items.filter(i => i.habit_id === hid && !i.archived && (i.parent_id || null) === (pid || null)).sort((a, b) => a.position - b.position);
+const checkId = (hid, iid, day) => `${hid}:${iid || "-"}:${day}`;
+function isDone(hid, iid, day) { const c = S.checks.find(x => x.id === checkId(hid, iid, day)); return !!(c && c.done); }
+function waterToday(hid) { const t = today(); return S.water_logs.filter(w => w.habit_id === hid && w.day === t).reduce((s, w) => s + w.ml, 0); }
+function isWeekly(hid) { return S.items.some(i => i.habit_id === hid && !i.archived && i.weekday); }
+
+// leaves that count toward today's auto-tick
+function activeLeaves(hid) {
+  const tops = kids(hid, null);
+  if (isWeekly(hid)) {
+    const day = tops.find(t => t.weekday === todayWd());
+    if (!day) return [];
+    const ch = kids(hid, day.id);
+    return ch.length ? ch : [];
+  }
+  const out = [];
+  const walk = list => list.forEach(it => { const c = kids(hid, it.id); c.length ? walk(c) : (!it.is_group && out.push(it)); });
+  walk(tops);
+  return out;
+}
+function allLeavesDone(hid) { const l = activeLeaves(hid); return l.length > 0 && l.every(x => isDone(hid, x.id, today())); }
+
+function checkOp(hid, iid, done) {
+  return { t: "checks", kind: "upsert", row: { id: checkId(hid, iid, today()), habit_id: hid, item_id: iid || null, day: today(), done, updated_by: me, updated_at: new Date().toISOString() } };
+}
+
+// ---------- actions ----------
+function toggleHabit(hid) { mutate(checkOp(hid, null, !isDone(hid, null, today()))); }
+function toggleLeaf(hid, iid) {
+  const before = allLeavesDone(hid);
+  const op = checkOp(hid, iid, !isDone(hid, iid, today()));
+  applyLocal(op);
+  const after = allLeavesDone(hid);
+  const ops = [op];
+  if (after && !isDone(hid, null, today())) ops.push(checkOp(hid, null, true));
+  if (before && !after && isDone(hid, null, today())) ops.push(checkOp(hid, null, false));
+  mutate(...ops);
+}
+function addWater(h, ml) {
+  const before = waterToday(h.id);
+  const ops = [{ t: "water_logs", kind: "upsert", row: { id: uuid(), habit_id: h.id, day: today(), ml, created_by: me, created_at: new Date().toISOString() } }];
+  const after = before + ml;
+  if (after >= h.water_goal_ml && !isDone(h.id, null, today())) ops.push(checkOp(h.id, null, true));
+  mutate(...ops);
+}
+function undoWater(h) {
+  const logs = S.water_logs.filter(w => w.habit_id === h.id && w.day === today()).sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
+  const last = logs.pop(); if (!last) return;
+  const ops = [{ t: "water_logs", kind: "delete", id: last.id }];
+  if (waterToday(h.id) - last.ml < h.water_goal_ml && isDone(h.id, null, today())) ops.push(checkOp(h.id, null, false));
+  mutate(...ops);
+}
+function customWater(h) {
+  const v = prompt("How many ml?", "330");
+  const ml = parseInt(v, 10);
+  if (ml > 0 && ml < 5000) addWater(h, ml);
+}
+function nudge(to, hid, emoji) {
+  mutate({ t: "nudges", kind: "upsert", row: { id: uuid(), from_person: me, to_person: to, habit_id: hid || null, emoji, seen: false, created_at: new Date().toISOString() } });
+}
+function markSeen() {
+  const ops = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id).map(n => ({ t: "nudges", kind: "upsert", row: { ...n, seen: true } }));
+  if (ops.length) mutate(...ops);
+}
+
+// editing
+function nextPos(list) { return list.length ? Math.max(...list.map(x => x.position)) + 1 : 0; }
+function addHabit(owner, water) {
+  const title = prompt(water ? "Name (e.g. Water)" : "New habit name", water ? "Water" : "");
+  if (!title) return;
+  let goal = null;
+  if (water) { const l = parseFloat(prompt("Daily goal in litres", "2.5")); if (!(l > 0)) return; goal = Math.round(l * 1000); }
+  mutate({ t: "habits", kind: "upsert", row: { id: uuid(), owner, title: title.trim(), kind: water ? "water" : "check", water_goal_ml: goal, position: nextPos(habitsOf(owner)), archived: false } });
+}
+function renameHabit(h) {
+  const t = prompt("Rename habit", h.title); if (!t) return;
+  const row = { ...h, title: t.trim() };
+  if (h.kind === "water") { const l = parseFloat(prompt("Daily goal in litres", (h.water_goal_ml / 1000).toString())); if (l > 0) row.water_goal_ml = Math.round(l * 1000); }
+  mutate({ t: "habits", kind: "upsert", row });
+}
+function deleteHabit(h) { if (confirm(`Delete "${h.title}"? Its history is kept and can be restored.`)) mutate({ t: "habits", kind: "upsert", row: { ...h, archived: true } }); }
+const DAYNAMES = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+function addItem(hid, pid, asGroup) {
+  const label = prompt(asGroup ? "Group name (start with a weekday, e.g. \"Monday — Upper\", to make it a day)" : "New item", "");
+  if (!label) return;
+  let weekday = null;
+  if (asGroup) { const i = DAYNAMES.indexOf(label.trim().split(/[\s—-]/)[0].toLowerCase()); if (i >= 0) weekday = i + 1; }
+  mutate({ t: "items", kind: "upsert", row: { id: uuid(), habit_id: hid, parent_id: pid || null, label: label.trim(), weekday, is_group: !!asGroup, position: nextPos(kids(hid, pid)), archived: false } });
+}
+function renameItem(it) { const l = prompt("Rename", it.label); if (l) mutate({ t: "items", kind: "upsert", row: { ...it, label: l.trim() } }); }
+function deleteItem(it) { if (confirm(`Remove "${it.label}"?`)) mutate({ t: "items", kind: "upsert", row: { ...it, archived: true } }); }
+
+function exportCsv() {
+  const name = id => (S.habits.find(h => h.id === id) || {}).title || "";
+  const label = id => (S.items.find(i => i.id === id) || {}).label || "";
+  const lines = ["type,person,habit,item,day,value"];
+  S.checks.forEach(c => { const h = S.habits.find(x => x.id === c.habit_id) || {}; lines.push(["check", h.owner, name(c.habit_id), label(c.item_id), c.day, c.done ? 1 : 0].map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")); });
+  S.water_logs.forEach(w => { const h = S.habits.find(x => x.id === w.habit_id) || {}; lines.push(["water_ml", h.owner, name(w.habit_id), "", w.day, w.ml].join(",")); });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `habitizer-${today()}.csv`; a.click();
+}
+
+// ---------- rendering ----------
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const $app = document.getElementById("app");
+const A = {}; let aid = 0;
+function act(fn) { const k = "a" + (aid++); A[k] = fn; return `data-a="${k}"`; }
+$app.addEventListener("click", e => { const el = e.target.closest("[data-a]"); if (el && A[el.dataset.a]) { e.stopPropagation(); A[el.dataset.a](); } });
+
+function bottle(total, goal) {
+  const frac = Math.min(total / goal, 1);
+  const over = total > goal;
+  const top = 22, bottom = 116, h = bottom - top;
+  const y = bottom - frac * h;
+  const path = "M22 4h16v10c8 4 12 9 12 18v78a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V32c0-9 4-14 12-18z";
+  return `<svg width="58" height="118" viewBox="0 0 60 122" aria-label="water bottle">
+    <defs><clipPath id="cp${goal}${total}"><path d="${path}"/></clipPath></defs>
+    <g clip-path="url(#cp${goal}${total})"><rect x="0" y="${y}" width="60" height="${122 - y}" fill="${over ? "var(--water2)" : "var(--water)"}" style="transition:y .4s"/></g>
+    <path d="${path}" fill="none" stroke="#9fb3c6" stroke-width="2.5"/>
+    <rect x="20" y="0" width="20" height="6" rx="2" fill="#9fb3c6"/></svg>`;
+}
+
+function setStatus() {
+  const el = document.getElementById("status"); if (!el) return;
+  const n = outbox.length;
+  online = navigator.onLine;
+  el.className = "status" + (online ? "" : " off");
+  el.textContent = online ? (n ? `Syncing ${n} change${n > 1 ? "s" : ""}…` : "Up to date") : `Offline — ${n} change${n === 1 ? "" : "s"} saved on this phone`;
+}
+
+function render() {
+  for (const k in A) delete A[k]; aid = 0;
+  if (!me) return;
+  const people = S.people.length ? S.people : [{ id: "riad", display_name: "Riad" }, { id: "foufi", display_name: "Foufi" }];
+  if (!ui.view) ui.view = me;
+  const view = ui.view, t = today();
+  const other = people.find(p => p.id !== me) || {};
+  const unseen = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id);
+  let html = `<header><div><h1>${esc((people.find(p => p.id === view) || {}).display_name || "")}</h1><div class="date">${esc(prettyToday())}</div></div>
+    <button class="hbtn ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button></header>
+    <div id="status" class="status"></div><main>`;
+  if (view === me && unseen.length) {
+    html += `<div class="banner"><div>${esc(other.display_name)} nudged you ${unseen.map(n => esc(n.emoji)).join(" ")}</div><button class="hbtn" ${act(markSeen)}>OK</button></div>`;
+  }
+  if (view !== me) {
+    html += `<div class="banner" style="background:var(--card2);border-color:var(--line)"><div>Send ${esc(other.display_name)} a nudge</div><button class="hbtn on" ${act(() => nudge(view, null, "👋"))}>👋 Nudge</button></div>`;
+  }
+  for (const h of habitsOf(view)) {
+    const done = isDone(h.id, null, t);
+    const days = S.checks.filter(c => c.habit_id === h.id && !c.item_id && c.done).map(c => c.day);
+    const st = streaks(days, t);
+    const open = !!ui.open[h.id];
+    const reacts = S.nudges.filter(n => n.habit_id === h.id && n.created_at && fmtDay.format(new Date(n.created_at)) === t).map(n => n.emoji).join("");
+    const hasSub = kids(h.id, null).length > 0 || ui.edit;
+    html += `<div class="habit"><div class="row">
+      <button class="box ${done ? "done" : ""}" ${act(() => toggleHabit(h.id))}>${done ? "✓" : ""}</button>
+      <div class="title" ${act(() => { ui.open[h.id] = !open; saveAll(); render(); })}>
+        <b>${esc(h.title)}</b><span class="streak">🔥 ${st.cur}</span>${reacts ? `<span class="reacts">${esc(reacts)}</span>` : ""}
+        <div class="meta">Best streak: ${st.best} day${st.best === 1 ? "" : "s"}</div></div>
+      ${ui.edit ? `<button class="edit" ${act(() => renameHabit(h))}>✎</button><button class="x" ${act(() => deleteHabit(h))}>✕</button>` : ""}
+      ${hasSub && h.kind !== "water" ? `<span class="chev ${open ? "open" : ""}" ${act(() => { ui.open[h.id] = !open; saveAll(); render(); })}>›</span>` : ""}
+    </div>`;
+    if (h.kind === "water") {
+      const tot = waterToday(h.id), goal = h.water_goal_ml || 2000;
+      html += `<div class="water">${bottle(tot, goal)}<div class="btns">
+        <div class="amt">${+(tot / 1000).toFixed(2)} <small>/ ${goal / 1000} L${tot > goal ? ` · +${((tot - goal) / 1000).toFixed(2)} L extra` : ""}</small></div>
+        <button ${act(() => addWater(h, 250))}>+250 ml</button><button ${act(() => addWater(h, 500))}>+500 ml</button>
+        <button ${act(() => customWater(h))}>Custom</button><button ${act(() => undoWater(h))}>Undo</button></div></div>`;
+    }
+    if (open && h.kind !== "water") html += `<div class="sub">${renderTree(h)}</div>`;
+    if (view !== me && done) {
+      html += `<div class="emojis">${REACTIONS.map(e => `<button ${act(() => nudge(view, h.id, e))}>${e}</button>`).join("")}</div>`;
+    }
+    html += `</div>`;
+  }
+  if (ui.edit) {
+    html += `<button class="add" ${act(() => addHabit(view, false))}>+ Add habit</button><button class="add" ${act(() => addHabit(view, true))}>+ Add water habit</button>`;
+  }
+  html += `</main><div class="foot">Habitizer · <button ${act(exportCsv)}>Export data</button> · <button ${act(signOut)}>Sign out</button></div>`;
+  html += `<nav>${people.map(p => {
+    const badge = p.id === me && unseen.length ? `<span class="dot">${unseen.length}</span>` : "";
+    return `<button class="${p.id === view ? "on" : ""}" ${act(() => { ui.view = p.id; saveAll(); render(); window.scrollTo(0, 0); })}>${esc(p.display_name)}${p.id === me ? " (you)" : ""}${badge}</button>`;
+  }).join("")}</nav>`;
+  $app.innerHTML = html;
+  setStatus();
+}
+
+function renderTree(h) {
+  const wd = todayWd(), t = today();
+  const weekly = isWeekly(h.id);
+  let out = "";
+  const leaf = (it, tickable) => {
+    const d = tickable && isDone(h.id, it.id, t);
+    return `<div class="leaf ${tickable ? "" : "dim"}">
+      ${tickable ? `<button class="box small ${d ? "done" : ""}" ${act(() => toggleLeaf(h.id, it.id))}>${d ? "✓" : ""}</button>` : `<span style="flex:none;width:24px;text-align:center">•</span>`}
+      <span>${esc(it.label)}</span>
+      ${ui.edit ? `<button class="edit" ${act(() => renameItem(it))}>✎</button><button class="x" ${act(() => deleteItem(it))}>✕</button>` : ""}</div>`;
+  };
+  for (const top of kids(h.id, null)) {
+    const ch = kids(h.id, top.id);
+    const isGroup = top.is_group || ch.length > 0 || !!top.weekday;
+    if (!isGroup) { out += leaf(top, true); continue; }
+    const isToday = weekly && top.weekday === wd;
+    const tickable = !weekly || isToday;
+    const key = "g" + top.id;
+    const open = ui.open[key] !== undefined ? ui.open[key] : (!weekly || isToday);
+    out += `<div class="group"><div class="ghead" ${act(() => { ui.open[key] = !open; saveAll(); render(); })}>
+      <span class="chev ${open ? "open" : ""}">›</span><span style="flex:1">${esc(top.label)}</span>${isToday ? `<span class="tag">Today</span>` : ""}
+      ${ui.edit ? `<button class="edit" ${act(() => renameItem(top))}>✎</button><button class="x" ${act(() => deleteItem(top))}>✕</button>` : ""}</div>`;
+    if (open) {
+      out += ch.map(c => leaf(c, tickable)).join("");
+      if (ui.edit) out += `<div style="padding:0 12px 8px"><button class="add" ${act(() => addItem(h.id, top.id, false))}>+ Add to ${esc(top.label)}</button></div>`;
+    }
+    out += `</div>`;
+  }
+  if (ui.edit) out += `<button class="add" ${act(() => addItem(h.id, null, false))}>+ Add item</button><button class="add" ${act(() => addItem(h.id, null, true))}>+ Add group / day</button>`;
+  if (!out) out = `<div class="meta" style="padding:4px 2px">No sub-items. Tap Edit to add some.</div>`;
+  return out;
+}
+
+// ---------- login ----------
+function renderLogin(msg) {
+  const saved = load("hz-email", "");
+  $app.innerHTML = `<div class="login"><h1>Habitizer</h1><p style="color:var(--muted)">Who's this?</p>
+    <button class="ghost" id="pick-riad">I'm Riad</button><button class="ghost" id="pick-foufi">I'm Foufi</button>
+    <input id="email" type="email" placeholder="email" value="${esc(saved)}" autocomplete="username">
+    <input id="pw" type="password" placeholder="password (8+ characters)" autocomplete="current-password">
+    <button class="big" id="login">Log in</button>
+    <button class="ghost" id="signup">First time here? Create my password</button>
+    <div class="err" id="err">${esc(msg || "")}</div></div>`;
+  const $e = document.getElementById("email"), $p = document.getElementById("pw"), $err = document.getElementById("err");
+  document.getElementById("pick-riad").onclick = () => { $e.value = EMAILS.riad; $p.focus(); };
+  document.getElementById("pick-foufi").onclick = () => { $e.value = EMAILS.foufi; $p.focus(); };
+  const creds = () => {
+    const email = $e.value.trim().toLowerCase(), password = $p.value;
+    if (!Object.values(EMAILS).includes(email)) { $err.textContent = "That email isn't one of the two accounts."; return null; }
+    if (password.length < 8) { $err.textContent = "Password needs at least 8 characters."; return null; }
+    store("hz-email", email); return { email, password };
+  };
+  document.getElementById("login").onclick = async () => {
+    const c = creds(); if (!c) return;
+    $err.textContent = "Logging in…";
+    const { error } = await sb.auth.signInWithPassword(c);
+    if (error) { $err.textContent = error.message; return; }
+    start();
+  };
+  document.getElementById("signup").onclick = async () => {
+    const c = creds(); if (!c) return;
+    $err.textContent = "Creating your account…";
+    const { data, error } = await sb.auth.signUp(c);
+    if (error) { $err.textContent = /registered/i.test(error.message) ? "This account already exists. Use Log in." : error.message; return; }
+    if (!data.session) { $err.textContent = "Account made, but email confirmation is still switched on in Supabase. Ask Riad to turn it off, then tap Log in."; return; }
+    start();
+  };
+}
+
+async function signOut() { if (confirm("Sign out of Habitizer on this phone?")) { await sb.auth.signOut(); me = null; renderLogin(); } }
+
+async function start() {
+  const { data } = await sb.auth.getSession();
+  const email = data.session && data.session.user.email ? data.session.user.email.toLowerCase() : null;
+  if (!email) { renderLogin(); return; }
+  me = Object.keys(EMAILS).find(k => EMAILS[k] === email) || null;
+  if (!me) { renderLogin("This account isn't part of Habitizer."); return; }
+  render(); await flush(); await refresh(); subscribe();
+}
+
+// ---------- boot ----------
+let lastDay = today();
+function wake() {
+  if (today() !== lastDay) { lastDay = today(); render(); }
+  if (me) { flush().then(refresh); }
+}
+window.addEventListener("online", () => { setStatus(); wake(); });
+window.addEventListener("offline", setStatus);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
+setInterval(() => { if (today() !== lastDay) { lastDay = today(); render(); } }, 60000);
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+
+if (window.supabase) {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+  start();
+} else {
+  $app.innerHTML = `<div class="login"><h1>Habitizer</h1><p>Open the app once while online to finish setting it up.</p></div>`;
+}
+</script>
+</body>
+</html>
