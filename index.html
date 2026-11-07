@@ -531,7 +531,7 @@ function hero(title, sub, extra = "") {
 
 function renderNav() {
   const unseen = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id).length;
-  const tabs = [["riad", nameOf("riad")], ["scores", "Scores"], ["foufi", nameOf("foufi")], ["calendar", "Calendar"]];
+  const tabs = [["riad", nameOf("riad")], ["foufi", nameOf("foufi")], ["calendar", "Calendar"], ["scores", "Scores"]];
   return `<nav>${tabs.map(([id, label]) => {
     const on = ui.view === id;
     const bg = on ? (id === "riad" || id === "foufi" ? colorOf(id) : "#1D2433") : "";
@@ -544,9 +544,10 @@ function renderNav() {
 function renderPerson(view) {
   const t = today(), other = view === "riad" ? "foufi" : "riad";
   const hs = habitsOf(view), due = hs.filter(dueToday), doneN = due.filter(h => isDone(h.id, null, t)).length;
-  const label = !due.length ? "Nothing due today" : doneN === due.length ? "Everything done today" : `${doneN} of ${due.length} done today`;
+  const label = !due.length ? "Nothing due today" : doneN === due.length ? "Everything done today" : `${doneN} of ${due.length} done today` + (due.some(h => h.kind === "water" && !isDone(h.id, null, t) && amountOn(h.id, t) > 0) ? ", water on its way" : "");
   let html = hero(nameOf(view), prettyToday(), `<button class="hbtn ${ui.edit ? "on" : ""}" ${act(() => { ui.edit = !ui.edit; saveAll(); render(); })}>${ui.edit ? "Done" : "Edit"}</button>`);
-  html += `<div class="progress">${due.map(h => `<i class="${isDone(h.id, null, t) ? "on" : ""}"></i>`).join("")}</div><div class="progress-label">${esc(label)}</div></section><div id="status" class="status"></div><main>`;
+  const part = h => isDone(h.id, null, t) ? 1 : h.kind === "water" ? Math.min(amountOn(h.id, t) / (h.water_goal_ml || 2000), 1) : 0;
+  html += `<div class="progress">${due.map(h => `<i style="background:linear-gradient(90deg,#fff ${Math.round(part(h) * 100)}%,rgba(255,255,255,.28) ${Math.round(part(h) * 100)}%)"></i>`).join("")}</div><div class="progress-label">${esc(label)}</div></section><div id="status" class="status"></div><main>`;
   const unseen = S.nudges.filter(n => n.to_person === me && !n.seen && !n.habit_id);
   if (view === me && unseen.length) html += `<div class="note"><div>${esc(nameOf(other))} nudged you ${unseen.map(n => esc(n.emoji)).join(" ")}</div><button class="pill" ${act(markSeen)}>Got it</button></div>`;
   if (view !== me) html += `<div class="note"><div>Cheer ${esc(nameOf(view))} on</div><button class="pill" ${act(() => nudge(view, null, "👋"))}>Send a nudge 👋</button></div>`;
