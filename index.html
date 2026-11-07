@@ -117,23 +117,28 @@ nav button.on{color:#fff}
 .calnav button{background:var(--card);border:1px solid var(--line);border-radius:12px;width:40px;height:36px;font-size:18px}
 .month{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .month .wd{text-align:center;font-size:12px;color:var(--soft);padding:4px 0}
-.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:58px;padding:5px 4px;text-align:left;display:flex;flex-direction:column;gap:3px}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:66px;padding:4px 3px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
 .cell.out{opacity:.35}
-.cell.today{border-color:var(--ink);border-width:2px}
-.cell.sel{background:#1D2433;color:#fff}
-.cell .dn{font-size:13px;font-weight:700}
-.mini{display:flex;gap:2px}
-.mini i{flex:1;height:5px;border-radius:3px;background:#E3E8EF;overflow:hidden;position:relative}
-.mini i b{position:absolute;inset:0;border-radius:3px}
-.edot{width:6px;height:6px;border-radius:50%;background:var(--ink)}
-.cell.sel .edot{background:#fff}
-.week .wrow{display:flex;gap:10px;align-items:stretch;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin:6px 0;text-align:left;width:100%}
-.week .wrow.sel{border-color:var(--ink);border-width:2px}
-.wrow .wday{width:46px;flex:none}
-.wrow .wday b{display:block;font-size:20px;font-family:"Bricolage Grotesque",system-ui,sans-serif}
-.wrow .wday span{font-size:12px;color:var(--soft)}
-.wrow .wbody{flex:1;min-width:0}
-.evchip{display:block;font-size:13px;border-radius:8px;padding:3px 8px;margin:3px 0;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell.today .dn{background:var(--ink);color:#fff}
+.cell.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.cell .dn{font-size:12px;font-weight:700;min-width:20px;height:20px;padding:0 3px;box-sizing:border-box;border-radius:10px;display:inline-grid;place-items:center;align-self:flex-start}
+.cell .lbl{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;font-size:10px;line-height:12px;font-weight:650;letter-spacing:-.2px;color:#fff;border-radius:4px;padding:2px 3px;max-height:28px;box-sizing:border-box;overflow:hidden;overflow-wrap:break-word}
+.cell .more{font-size:10px;font-weight:700;color:var(--soft);padding-left:2px}
+.whochips{display:flex;gap:8px;margin:10px 0 0}
+.whochips button{height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600}
+.whochips button.on{background:var(--ink);border-color:var(--ink);color:#fff!important}
+.agenda{margin-top:6px}
+.arow{display:flex;gap:14px;width:100%;background:none;border:none;border-top:1px solid var(--line);padding:10px 4px;text-align:left;color:var(--ink)}
+.arow.sel{background:var(--card);border-radius:14px;border-top-color:transparent}
+.arow .ad{width:44px;flex:none;text-align:center}
+.arow .ad span{display:block;font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase}
+.arow .ad b{display:block;font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:24px;line-height:1.1}
+.arow.today .ad b{color:var(--ink);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:3px}
+.arow .ab{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;padding-top:2px}
+.ablock{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#fff;border-radius:12px;padding:10px 12px}
+.ablock b{font-size:15px;font-weight:650;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ablock small{font-size:12px;opacity:.88;flex:none}
+.afree{font-size:13px;color:var(--soft);padding:6px 0}
 .event{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);width:100%;background:none;border-left:none;border-right:none;border-bottom:none;text-align:left}
 .event:first-of-type{border-top:none}
 .event .stripe{width:5px;align-self:stretch;border-radius:3px;flex:none}
@@ -236,6 +241,8 @@ let a11y = load("hz-a11y", { size: "m", contrast: false, motion: true });
 let me = null, online = navigator.onLine, syncing = false, sb = null;
 const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 3 | 8)).toString(16); }));
 function saveAll() { store("hz-cache", S); store("hz-outbox", outbox); const { sheet, settings, picker, ...keep } = ui; store("hz-ui", keep); }
+const BOTH_COLOR = "#6E56CF";
+function evColor(e) { return e.who === "both" ? BOTH_COLOR : colorOf(e.who); }
 function colorOf(pid) { const p = S.people.find(x => x.id === pid); return (p && p.color) || DEFAULT_COLORS[pid] || "#1D2433"; }
 function nameOf(pid) { const p = S.people.find(x => x.id === pid); return p ? p.display_name : pid === "riad" ? "Riad" : "Foufi"; }
 function people() { return S.people.length ? [...S.people].sort((a, b) => a.position - b.position) : [{ id: "riad", display_name: "Riad" }, { id: "foufi", display_name: "Foufi" }]; }
@@ -702,8 +709,10 @@ function renderCalendar() {
   const sel = ui.calDay;
   let html = hero("Calendar", "Plans and habits, together") + `</section><div id="status" class="status"></div><main>`;
   html += `<div class="seg" style="margin-top:12px">${[["week", "Week"], ["month", "Month"]].map(([k, n]) => `<button class="${ui.calMode === k ? "on" : ""}" ${act(() => { ui.calMode = k; saveAll(); render(); })}>${n}</button>`).join("")}</div>`;
-  const evOn = d => S.events.filter(e => e.day === d).sort((x, y) => (x.start_time || "") < (y.start_time || "") ? -1 : 1);
-  const mini = d => `<div class="mini">${["riad", "foufi"].map(p => { const s = dayScore(p, d); return `<i title="${esc(nameOf(p))}">${s == null ? "" : `<b style="background:${colorOf(p)};opacity:${0.25 + 0.75 * s};right:${Math.round((1 - s) * 100)}%"></b>`}</i>`; }).join("")}</div>`;
+  const who = ui.calWho || "all";
+  html += `<div class="whochips">${[["all", "Everyone", ""], ["riad", nameOf("riad"), colorOf("riad")], ["foufi", nameOf("foufi"), colorOf("foufi")]].map(([k, n, c]) => `<button class="${who === k ? "on" : ""}" style="${c ? `color:${c}` : ""}" ${act(() => { ui.calWho = k; saveAll(); render(); })}>${esc(n)}</button>`).join("")}</div>`;
+  const evOn = d => S.events.filter(e => e.day === d && (who === "all" || e.who === who || e.who === "both")).sort((x, y) => (x.start_time || "") < (y.start_time || "") ? -1 : 1);
+  const whoName = e => e.who === "both" ? "Both of you" : nameOf(e.who);
   if (ui.calMode === "month") {
     const first = sel.slice(0, 8) + "01", [y, m] = sel.split("-").map(Number);
     const last = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
@@ -713,24 +722,36 @@ function renderCalendar() {
     for (let d = weekStart(first); d <= addDays(weekStart(last), 6); d = addDays(d, 1)) {
       const evs = evOn(d);
       html += `<button class="cell ${d.slice(0, 7) !== first.slice(0, 7) ? "out" : ""} ${d === t ? "today" : ""} ${d === sel ? "sel" : ""}" ${act(() => { ui.calDay = d; render(); })} aria-label="${prettyDay(d, true)}${evs.length ? `, ${evs.length} plan${evs.length > 1 ? "s" : ""}` : ""}">
-        <span class="dn">${+d.slice(8)}</span>${mini(d)}${evs.length ? `<span class="edot"></span>` : ""}</button>`;
+        <span class="dn">${+d.slice(8)}</span>${evs.slice(0, evs.length > 2 ? 1 : 2).map(e => `<span class="lbl" style="background:${evColor(e)}">${esc(e.title)}</span>`).join("")}${evs.length > 2 ? `<span class="more">+${evs.length - 1}</span>` : ""}</button>`;
     }
     html += `</div>`;
   } else {
     const ws = weekStart(sel);
     const shift = n => { ui.calDay = addDays(sel, 7 * n); render(); };
-    html += `<div class="calnav"><button ${act(() => shift(-1))} aria-label="Previous week">‹</button><b>${prettyDay(ws)} – ${prettyDay(addDays(ws, 6))}</b><button ${act(() => shift(1))} aria-label="Next week">›</button></div><div class="week">`;
-    for (let i = 0; i < 7; i++) {
+    html += `<div class="calnav"><button ${act(() => shift(-1))} aria-label="Previous week">‹</button><b>${prettyDay(ws)} – ${prettyDay(addDays(ws, 6))}</b><button ${act(() => shift(1))} aria-label="Next week">›</button></div><div class="agenda">`;
+    const dayHead = d => `<div class="ad"><span>${WDN[wdOf(d) - 1]}</span><b>${+d.slice(8)}</b></div>`;
+    let i = 0;
+    while (i < 7) {
       const d = addDays(ws, i), evs = evOn(d);
-      html += `<button class="wrow ${d === sel ? "sel" : ""}" ${act(() => { ui.calDay = d; render(); })}><div class="wday"><span>${WDN[i]}</span><b>${+d.slice(8)}</b></div>
-        <div class="wbody">${mini(d)}${evs.map(e => `<span class="evchip" style="background:${e.who === "both" ? "#1D2433" : colorOf(e.who)}">${e.start_time ? fmtTime(e.start_time) + " " : ""}${esc(e.title)}</span>`).join("")}</div></button>`;
+      if (evs.length || d === t) {
+        html += `<button class="arow ${d === sel ? "sel" : ""} ${d === t ? "today" : ""}" ${act(() => { ui.calDay = d; render(); })} aria-label="${prettyDay(d, true)}">${dayHead(d)}<div class="ab">${evs.map(e => `<div class="ablock" style="background:${evColor(e)}"><b>${e.start_time ? fmtTime(e.start_time) + " · " : ""}${esc(e.title)}</b><small>${esc(whoName(e))}</small></div>`).join("") || `<div class="afree">Today · nothing planned</div>`}</div></button>`;
+        i++;
+      } else {
+        let j = i; while (j + 1 < 7 && !evOn(addDays(ws, j + 1)).length && addDays(ws, j + 1) !== t) j++;
+        const a = addDays(ws, i), b = addDays(ws, j);
+        const lbl = i === j ? prettyDay(a) : `${prettyDay(a)} – ${prettyDay(b)}`;
+        const txt = i === j ? "Free day" : `Free until ${WDN[wdOf(b) - 1]} ${+b.slice(8)}`;
+        const isSel = sel >= a && sel <= b;
+        html += `<button class="arow ${isSel ? "sel" : ""}" ${act(() => { ui.calDay = a; render(); })} aria-label="Free ${lbl}">${dayHead(a)}<div class="ab"><div class="afree">${esc(txt)}</div></div></button>`;
+        i = j + 1;
+      }
     }
     html += `</div>`;
   }
   // selected day
   const evs = evOn(sel);
   html += `<div class="card"><h2>${esc(prettyDay(sel, true))}</h2>`;
-  html += evs.length ? evs.map(e => `<button class="event" ${act(() => openEventSheet(e))}><span class="stripe" style="background:${e.who === "both" ? "#1D2433" : colorOf(e.who)}"></span>
+  html += evs.length ? evs.map(e => `<button class="event" ${act(() => openEventSheet(e))}><span class="stripe" style="background:${evColor(e)}"></span>
       <span class="et"><b>${esc(e.title)}</b><small>${e.start_time ? `${fmtTime(e.start_time)}${e.end_time ? "–" + fmtTime(e.end_time) : ""}` : "All day"}, ${e.who === "both" ? "both of you" : esc(nameOf(e.who))}${e.note ? `. ${esc(e.note)}` : ""}</small></span></button>`).join("")
     : `<p class="hint" style="margin:4px 0 0">No plans.</p>`;
   html += `<button class="add" ${act(() => openEventSheet(null, sel))}>+ Add a plan</button>`;
