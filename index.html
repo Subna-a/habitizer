@@ -755,7 +755,7 @@ function renderCalendar() {
   const evs = evOn(sel);
   html += `<div class="card"><h2>${esc(prettyDay(sel, true))}</h2>`;
   html += evs.length ? evs.map(e => `<button class="event" ${act(() => openEventSheet(e))}><span class="stripe" style="background:${evColor(e)}"></span>
-      <span class="et"><b>${esc(e.title)}</b><small>${e.start_time ? `${fmtTime(e.start_time)}${e.end_time ? "–" + fmtTime(e.end_time) : ""}` : "All day"}, ${e.who === "both" ? "both of you" : esc(nameOf(e.who))}${e.note ? `. ${esc(e.note)}` : ""}</small></span></button>`).join("")
+      <span class="et"><b>${esc(e.title)}</b><small>${e.start_time ? `${fmtTime(e.start_time)}${e.end_time ? "–" + fmtTime(e.end_time) : ""}` : "All day"}, ${e.who === "both" ? "both of you" : esc(nameOf(e.who))}${e.note ? `. ${esc(e.note)}` : ""}${e.source ? " · from Digitary" : ""}</small></span></button>`).join("")
     : `<p class="hint" style="margin:4px 0 0">No plans.</p>`;
   html += `<button class="add" ${act(() => openEventSheet(null, sel))}>+ Add a plan</button>`;
   if (sel <= t) {
@@ -816,7 +816,13 @@ function renderSheet() {
     body += `<div class="actions">${!isNew ? `<button class="danger" ${act(() => { if (confirm(`Remove "${s.it.label}"?`)) { mutate({ t: "items", kind: "upsert", row: { ...s.it, archived: true } }); closeSheet(); } })}>Remove</button>` : ""}
       <button class="cancel" ${act(closeSheet)}>Cancel</button><button class="save" ${act(saveItemSheet)}>${isNew ? "Add" : "Save"}</button></div>`;
   }
-  if (s.type === "event") {
+  if (s.type === "event" && s.e && s.e.source) {
+    const e = s.e;
+    body += `<div class="sheet-head"><h1>${esc(e.title)}</h1></div>
+      <p class="hint">${esc(prettyDay(e.day, true))}, ${e.start_time ? `${fmtTime(e.start_time)}${e.end_time ? "–" + fmtTime(e.end_time) : ""}` : "All day"}${e.note ? `. ${esc(e.note)}` : ""}</p>
+      <p class="hint">From ${esc(nameOf("riad"))}'s Digitary. It updates each morning, so change it in the calendar it came from.</p>
+      <div class="actions"><button class="save" ${act(closeSheet)}>OK</button></div>`;
+  } else if (s.type === "event") {
     const isNew = !s.e;
     body += `<div class="sheet-head"><h1>${isNew ? "New plan" : "Edit plan"}</h1></div>
       <div class="field"><label for="f-et">What</label><input id="f-et" type="text" data-f="title" value="${esc(d.title)}" placeholder="e.g. Dinner at Em Sherif"></div>
